@@ -296,7 +296,7 @@ while(livePage.LiveRoomLikeNum === undefined || livePage.LiveRoomWatchNum === un
 
 // 解析直播页面
 function parseLivePage() {
-	var LiveRoomWatchDom = textContains('人看过').drawingOrder(1).focusable(false).find()[0];//多少人看过
+	var LiveRoomWatchDom = textContains('人看过').drawingOrder(1).focusable(false).findOne();//多少人看过
 	if (LiveRoomWatchDom) {
 		var LiveRoomWatchDomTexts = LiveRoomWatchDom.text().split(' · ');
 		livePage.LiveRoomWatchNum = LiveRoomWatchDomTexts[0].replace('人看过', '').trim();
@@ -321,7 +321,7 @@ function parseLivePage() {
 		}
 	}
 
-	var likeBtn = id('dpb').find()[0];
+	var likeBtn = id('dpb').findOne();
 	var num = 0;
 	if (likeBtn) {
 		var numTextDom = likeBtn.find(textMatches(".*\\d+.*"));
