@@ -1,226 +1,608 @@
+"ui";
 
-importClass(android.content.Context);
-ui.layout(
-	<vertical bg="#f5f5f5" textSize="15sp">
-		<appbar >
-			<toolbar title="视频号自动点赞 " />
-		</appbar>
+ui.statusBarColor("#409EFF");
+var globalData = {
+	forms: [],//form表单
+	thread: ''
+}
+observeKey();
+showMainUI();
+checkService();
+clearStorage();
+onload();
 
-		<vertical margin="10" bg="#ffffff" padding="10 5" radius="20">
-			<horizontal layout_gravity="center" gravity="center">
-				<text textColor="#353535" text="脚本卡密:"></text>
-				<input margin="10 0 0 0" w="150sp" textSize="15sp" text="" gravity="center" hint="请输入" id="password" />
-				<text id="passworderrortip" textColor="#fa5151" alpha="0" gravity="right" margin="0" >卡密错误</text>
-			</horizontal>
-
-			<horizontal layout_gravity="center" gravity="center" margin="0 -5 0 0" >
-				<text>👉️</text>
-				<text textColor="#00bcd4" textSize="10sp" text="登录“视蘋号下载神器”微信小程序, 获取当天免费脚本卡密"></text>
-			</horizontal>
-
-		</vertical>
-
-		<vertical margin="10" bg="#ffffff" padding="10" radius="20">
-			<Switch id="autoService" text="{{auto.service != null ? '已打开无障碍服务' : '请打开无障碍服务' }}" checked="{{auto.service != null}}" padding="8 8 8 8" textSize="15sp" />
-
-			<Switch id="floatService" text="悬浮窗权限" checked="{{false}}" padding="8 8 8 8" textSize="15sp" />
+var myee = events.emitter();	
+InitEventEmit();
 
 
-			<horizontal margin="10">
-				<text text="每分钟点赞次数:"></text>
-				<input text="100" gravity="center" hint="默认点赞100次" w="100" marginLeft="10" inputType="number" id="dianzanTime" />
-			</horizontal>
+//主界面
+function showMainUI() {
+	ui.layout(
+		<vertical bg="#f5f5f5" textSize="15sp">
+			<ScrollView>
+				<vertical>
+					<vertical margin="10" bg="#ffffff" padding="10" radius="20">
+						<Switch id="autoService" text="{{auto.service != null ? '已打开无障碍服务' : '请打开无障碍服务' }}" checked="{{true}}" padding="8 8 8 8" textSize="15sp" />
+					</vertical>
+					{/* 视频序号1 */}
+					<vertical margin="10" bg="#ffffff" padding="10 5" radius="20">
 
-			<button bg="#009788" textColor="#ffffff" textSize="58px" layout_gravity="center" gravity="center" h="180px" w="800px" id="start" marginTop="50px" text="开始运行" />
+						<vertical padding="4">
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="15sp" textStyle="bold" >1</text>
 
-			<text margin="10 20" textColor="#999999" textSize="10sp" text="温馨提示: 当直播点赞量大于2000而且比当场观看人数多时，会默认延迟5分钟再执行脚本点赞。"></text>
+							</horizontal>
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="13sp" text="视频序号"  ></text>
+								<input w="80" inputType="number" textSize="13sp" text="" gravity="center" hint="数字" id="video1" />
+							</horizontal>
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="13sp" text="定时时间"  ></text>
+								<input w="150" textSize="13sp" text="" gravity="center" hint="日期时间" id="videosettime1" />
+								<text id="nowTime1" textColor="#353535" textSize="13sp" text="此刻"  ></text>
+							</horizontal>
+							<horizontal layout_gravity="center" gravity="center" margin="0 -5 0 0" >
+								<text>👉️</text>
+								<text textColor="#00bcd4" textSize="10sp" text="如9月20号15点30分，格式为9-20 15:30"></text>
+							</horizontal>
+						</vertical>
+						<linear gravity="">
+							<text id="message1" w="200sp" gravity="right" margin="0 0 10 0"></text>
+							<button id="start1" text="开启"></button>
+						</linear>
+					</vertical>
 
-		</vertical>
-	</vertical>
-);
+
+					{/* 视频序号2 */}
+					<vertical margin="10" bg="#ffffff" padding="10 5" radius="20">
+
+						<vertical padding="4">
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="15sp" textStyle="bold" >2</text>
+							</horizontal>
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="13sp" text="视频序号"  ></text>
+								<input w="80" textSize="13sp" text="" gravity="center" hint="数字" id="video2" />
+							</horizontal>
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="13sp" text="定时时间"  ></text>
+								<input w="180" textSize="13sp" text="" gravity="center" hint="日期时间" id="videosettime2" />
+								<text id="nowTime2" textColor="#353535" textSize="13sp" text="此刻"  ></text>
+							</horizontal>
+						</vertical>
+						<linear gravity="">
+							<text id="message2" w="200sp" gravity="right" margin="0 0 10 0"></text>
+							<button id="start2" text="开启"></button>
+						</linear>
+					</vertical>
+
+
+					{/* 视频序号3 */}
+					<vertical margin="10" bg="#ffffff" padding="10 5" radius="20">
+
+						<vertical padding="4">
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="15sp" textStyle="bold" >3</text>
+							</horizontal>
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="13sp" text="视频序号"  ></text>
+								<input w="80" textSize="13sp" text="" gravity="center" hint="数字" id="video3" />
+							</horizontal>
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="13sp" text="定时时间"  ></text>
+								<input w="180" textSize="13sp" text="" gravity="center" hint="日期时间" id="videosettime3" />
+								<text id="nowTime3" textColor="#353535" textSize="13sp" text="此刻"  ></text>
+							</horizontal>
+						</vertical>
+						<linear gravity="">
+							<text id="message3" w="200sp" gravity="right" margin="0 0 10 0"></text>
+							<button id="start3" text="开启"></button>
+						</linear>
+					</vertical>
+
+
+					{/* 视频序号4 */}
+					<vertical margin="10" bg="#ffffff" padding="10 5" radius="20">
+
+						<vertical padding="4">
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="15sp" textStyle="bold" >4</text>
+							</horizontal>
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="13sp" text="视频序号"  ></text>
+								<input w="80" textSize="13sp" text="" gravity="center" hint="数字" id="video4" />
+							</horizontal>
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="13sp" text="定时时间"  ></text>
+								<input w="180" textSize="13sp" text="" gravity="center" hint="日期时间" id="videosettime4" />
+								<text id="nowTime4" textColor="#353535" textSize="13sp" text="此刻"  ></text>
+							</horizontal>
+						</vertical>
+						<linear gravity="">
+							<text id="message4" w="200sp" gravity="right" margin="0 0 10 0"></text>
+							<button id="start4" text="开启"></button>
+						</linear>
+					</vertical>
 
 
 
-function createFloatWindow() {
-	w = floaty.rawWindow(
-		<vertical gravity="center" padding="10" bg="#000000" alpha="0.5">
+					{/* 视频序号5 */}
+					<vertical margin="10" bg="#ffffff" padding="10 5" radius="20">
 
-			<text w="auto" id="windowDianZan" gravity="center" textColor="#ffffff">点赞次数：0</text>
+						<vertical padding="4">
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="15sp" textStyle="bold" >5</text>
+							</horizontal>
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="13sp" text="视频序号"  ></text>
+								<input w="80" textSize="13sp" text="" gravity="center" hint="数字" id="video5" />
+							</horizontal>
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="13sp" text="定时时间"  ></text>
+								<input w="180" textSize="13sp" text="" gravity="center" hint="日期时间" id="videosettime5" />
+								<text id="nowTime5" textColor="#353535" textSize="13sp" text="此刻"  ></text>
+							</horizontal>
+						</vertical>
+						<linear gravity="">
+							<text id="message5" w="200sp" gravity="right" margin="0 0 10 0"></text>
+							<button id="start5" text="开启"></button>
+						</linear>
+					</vertical>
 
-			<button id="closeScript" bg="#009788" textColor="#ffffff" textSize="15" gravity="center" h="40" w="80" marginTop="10" text="停止"></button>
 
+					{/* 视频序号6 */}
+					<vertical margin="10" bg="#ffffff" padding="10 5" radius="20">
+
+						<vertical padding="4">
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="15sp" textStyle="bold" >6</text>
+							</horizontal>
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="13sp" text="视频序号"  ></text>
+								<input w="80" textSize="13sp" text="" gravity="center" hint="数字" id="video6" />
+							</horizontal>
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="13sp" text="定时时间"  ></text>
+								<input w="180" textSize="13sp" text="" gravity="center" hint="日期时间" id="videosettime6" />
+								<text id="nowTime6" textColor="#353535" textSize="13sp" text="此刻"  ></text>
+							</horizontal>
+						</vertical>
+						<linear gravity="">
+							<text id="message6" w="200sp" gravity="right" margin="0 0 10 0"></text>
+							<button id="start6" text="开启"></button>
+						</linear>
+					</vertical>
+
+
+					{/* 视频序号7 */}
+					<vertical margin="10" bg="#ffffff" padding="10 5" radius="20">
+
+						<vertical padding="4">
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="15sp" textStyle="bold" >7</text>
+							</horizontal>
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="13sp" text="视频序号"  ></text>
+								<input w="80" textSize="13sp" text="" gravity="center" hint="数字" id="video7" />
+							</horizontal>
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="13sp" text="定时时间"  ></text>
+								<input w="180" textSize="13sp" text="" gravity="center" hint="日期时间" id="videosettime7" />
+								<text id="nowTime7" textColor="#353535" textSize="13sp" text="此刻"  ></text>
+							</horizontal>
+						</vertical>
+						<linear gravity="">
+							<text id="message7" w="200sp" gravity="right" margin="0 0 10 0"></text>
+							<button id="start7" text="开启"></button>
+						</linear>
+					</vertical>
+
+
+
+					{/* 视频序号8 */}
+					<vertical margin="10" bg="#ffffff" padding="10 5" radius="20">
+
+						<vertical padding="4">
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="15sp" textStyle="bold" >8</text>
+							</horizontal>
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="13sp" text="视频序号"  ></text>
+								<input w="80" textSize="13sp" text="" gravity="center" hint="数字" id="video8" />
+							</horizontal>
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="13sp" text="定时时间"  ></text>
+								<input w="180" textSize="13sp" text="" gravity="center" hint="日期时间" id="videosettime8" />
+								<text id="nowTime8" textColor="#353535" textSize="13sp" text="此刻"  ></text>
+							</horizontal>
+						</vertical>
+						<linear gravity="">
+							<text id="message8" w="200sp" gravity="right" margin="0 0 10 0"></text>
+							<button id="start8" text="开启"></button>
+						</linear>
+					</vertical>
+
+
+					{/* 视频序号9 */}
+					<vertical margin="10" bg="#ffffff" padding="10 5" radius="20">
+
+						<vertical padding="4">
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="15sp" textStyle="bold" >9</text>
+							</horizontal>
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="13sp" text="视频序号"  ></text>
+								<input w="80" textSize="13sp" text="" gravity="center" hint="数字" id="video9" />
+							</horizontal>
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="13sp" text="定时时间"  ></text>
+								<input w="180" textSize="13sp" text="" gravity="center" hint="日期时间" id="videosettime9" />
+								<text id="nowTime9" textColor="#353535" textSize="13sp" text="此刻"  ></text>
+							</horizontal>
+						</vertical>
+						<linear gravity="">
+							<text id="message9" w="200sp" gravity="right" margin="0 0 10 0"></text>
+							<button id="start9" text="开启"></button>
+						</linear>
+					</vertical>
+
+
+					{/* 视频序号10 */}
+					<vertical margin="10" bg="#ffffff" padding="10 5" radius="20">
+
+						<vertical padding="4">
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="15sp" textStyle="bold" >10</text>
+							</horizontal>
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="13sp" text="视频序号"  ></text>
+								<input w="80" textSize="13sp" text="" gravity="center" hint="数字" id="video10" />
+							</horizontal>
+							<horizontal layout_gravity="center" >
+								<text textColor="#353535" textSize="13sp" text="定时时间"  ></text>
+								<input w="180" textSize="13sp" text="" gravity="center" hint="日期时间" id="videosettime10" />
+								<text id="nowTime10" textColor="#353535" textSize="13sp" text="此刻"  ></text>
+							</horizontal>
+						</vertical>
+						<linear gravity="">
+							<text id="message10" w="200sp" gravity="right" margin="0 0 10 0"></text>
+							<button id="start10" text="开启"></button>
+						</linear>
+					</vertical>
+				</vertical>
+			</ScrollView>
 		</vertical>
 	);
-	w.setPosition(device.width - 400, 300);
-	w.closeScript.on('click', function () {
-		exit();
-		engines.stopAllAndToast();
-		threads.shutDownAll();
-		toast('脚本停止运行了');
-	});
+
+	for (var i = 1; i < 11; i++) {
+		(function (i) {
+			handlerRunSetTime(i);
+			handleNowTime(i);
+		})(i);
+
+	}
+
+
 }
 
-var livePage = {};//直播页面
-var w = null;//浮窗对象
-var globalData = {
-	api: 'https://luokem.github.io/',
-	vipDianZanTime: 0,//vip增加点赞数
-};
-
-ui.autoService.on("click", function () {
-	// 用户勾选无障碍服务的选项时，跳转到页面让用户去开启
-	if (auto.service == null) {
-		toast('请在该页面查找并开启无障碍功能服务')
-	}
-
-	app.startActivity({
-		action: "android.settings.ACCESSIBILITY_SETTINGS"
-	});
-});
-
-
-
-
-// 当用户回到本界面时，resume事件会被触发
-ui.emitter.on("resume", function () {
-	// 此时根据服务的开启状况，同步开关的状态
-	checkService();
-});
-
-// 检查权限是否开启
-function checkService() {
-	if(auto.service != null) {
-		ui.autoService.checked = true;
-		ui.autoService.setText('已打开无障碍服务');
-		
-	}else {
-		ui.autoService.checked = false;
-		ui.autoService.setText('请打开无障碍服务');
-		return {value: false, text: '请打开无障碍服务'}
-	}
-
-	if(android.provider.Settings.canDrawOverlays(context)) {
-		ui.floatService.checked = true;
-		ui.floatService.setText('已打开悬浮窗权限');
-	}else {
-		
-		ui.floatService.checked = false;
-		ui.floatService.setText('请打开悬浮窗权限');
-		return {value: false, text: '请打开悬浮窗权限'}
-	}
+function handleNowTime(i) {
+	ui['nowTime' + i].click(() => {
+		getNowTime(i);
+	})
 }
 
-checkService();
-
-
-
-ui.floatService.on("click", function () {
-	app.startActivity({
-		packageName: "com.android.settings",
-		className: "com.android.settings.Settings$AppDrawOverlaySettingsActivity",
-		data: "package:" + context.getPackageName().toString()
-	});
+//Event 事注册
+function InitEventEmit(){
+//监听线程结果
+    myee.on('result', function (res) {
+	console.log("12342")
+	if(res && res.code) {
+		successCallback(res.i);
+	}
+	globalData.thread && globalData.thread.interrupt();
+	
 });
 
 
+}
+
+//设置此刻时间
+function getNowTime(i) {
+	var date = new Date();
+	var time = dealWidthLength(date.getMonth() + 1) + '-' + dealWidthLength(date.getDate()) + ' ' + dealWidthLength(date.getHours()) + ':' + dealWidthLength(date.getMinutes());
+	ui['videosettime' + i].setText(time)
+}
+
+// 清空本地缓存记录
+function clearStorage() {
+	var storage = storages.create('storage');
+	storage.put('globalData', '');
+}
+
+function dealWidthLength(t) {
+	return t < 10 ? ('0' + t) : t
+}
+
+// 统一处理启动,暂停定时方法
+function handlerRunSetTime(i) {
+	//开启|暂停事件
+	ui['start' + i].click(function () {
+		ui['message' + i].setText('');
+
+		// console.log(globalData.forms)
+		globalData.forms[i - 1]['video' + i] = Number(ui['video' + i].text());
+		globalData.forms[i - 1]['videosettime' + i] = ui['videosettime' + i].text();
+
+		if (globalData.forms[i - 1]['start' + i] == '开启') {
+			addTask(globalData.forms[i - 1], i);
+		} else {
+			deletTask(globalData.forms[i - 1], i);
+		}
+	})
+}
 
 
-ui.start.on("click", function () {
-	//程序开始运行以前判断无障碍服务
-	if (checkService()) {
-		toast(checkService().text);
+
+function addTask(form, i) {
+
+
+	if (!form['video' + i] || !form['videosettime' + i]) return;
+	console.log("globalData.forms", handleDate(form['videosettime' + i]))
+	if (handleDate(form['videosettime' + i]) <= 0) {
+		toast('开启失败!时间不能低于目前时间')
 		return;
 	}
 
-	threads.start(function () {
-		
-		if (!getPassword()) return;
-		if (!checkValue()) return;
-		
-		app.launchPackage('com.tencent.mm');
-		sleep(3000);
-		var weixin = text('微信').className('TextView').findOne(4000);
-		if (weixin) {
-			click(weixin.bounds().centerX(), weixin.bounds().centerY());
-			sleep(2000);
+	for (var h = 1; h < 11; h++) {
+		if (globalData.forms[h - 1]['video' + h] == form['video' + h] && globalData.forms[h - 1]['start' + h] == '暂停') {
+			toast('开启失败!已有相同视频等待上传!')
+			return;
 		}
-		createFloatWindow();
-		onLoad();
-	});
-
-
-});
-
-
-
-function getPassword() {
-	var password = ui.password.text();
-	if (!password) {
-		ui.passworderrortip.alpha = 1;
-		ui.run(function () {
-			ui.passworderrortip.setText('不能为空');
-		});
-
-		return false;
 	}
 
-	ui.run(function () {
-		ui.passworderrortip.setText('确认中...');
+
+	globalData.forms[i - 1]['start' + i] = '暂停';
+	ui['start' + i].setText('暂停');
+
+
+
+	console.log("33333")
+	globalData.thread = threads.start(function(){
+		sleep(handleDate(form['videosettime' + i]));
+		
+			//检测网络状态
+			// internetCheck();
+			if (!globalData.forms[i - 1]['video' + i]) {
+				globalData.forms[i - 1]['start' + i] = '开启';
+				ui['start' + i].setText('开启');
+				var storage = storages.create('storage');
+				storage.put('globalData', globalData);
+				ui['message' + i].setText('任务已作废')
+				toast('任务已作废');
+				globalData.thread.interrupt();
+			}
+
+		wakeUp();
+		openShipinhao(i);
 	});
+	
 
-	var shipinhaokami = '';
-	var r = http.get("https://luokem.github.io//-_/");
-	var html = r.body.string();
+	var storage = storages.create('storage');
+	storage.put('globalData', globalData);
+}
 
-	if (r.statusCode == 200 && html) {
-		var regexp = new RegExp('<div id="shipinhao-kami">(.+)</div>');
-		if (regexp.test(html)) {
-			console.log(RegExp.$1)
-			shipinhaokami = RegExp.$1;
-		}
+
+
+
+
+function deletTask(form, i) {
+	form['videosettimeid' + i] && clearTimeout(form['videosettimeid' + i]) ;
+	globalData.thread && globalData.thread.interrupt();
+	globalData.thread = '';
+	globalData.forms[i-1]['videosettimeid' + i] = '';
+	ui['start' + i].setText('开启');
+	globalData.forms[i - 1]['start' + i] = '开启';
+	var storage = storages.create('storage');
+	storage.put('globalData', globalData);
+}
+
+
+
+function wakeUp() {
+	//唤醒手机
+	device.wakeUp();
+	sleep(3 * 1000);
+
+	device.wakeUpIfNeeded();
+
+	//判断屏幕是否唤醒成功
+	if (!device.isScreenOn()) {
+		console.error("屏幕未唤醒，退出脚本");
+		exit();
+	}
+
+	//上滑解锁
+	// sleep(3 * 1000);
+	// swipe(device.width / 2, device.height - 200, device.width / 2, Math.min(device.height / 5, 10), 1500);
+	// sleep(3 * 1000);
+
+	//脚本执行时保持屏幕常亮
+	device.keepScreenDim(5 * 60 * 1000);
+}
+
+//打开视频号视频
+function openShipinhao(i) {
+	//返回桌面
+	home();
+	sleep(3000);
+	launchApp("微信")
+	sleep(5 * 1000);
+	console.log("打开微信。。。")
+	while (!(text('微信').exists() && text('通讯录').exists() && text('发现').exists() && text('我').exists())) {
+		back();
+		sleep(1500);
+	}
+
+
+	click(text('发现').findOne().bounds().centerX(), text('发现').findOne().bounds().centerY());
+	sleep(3000);
+
+	click(text('视频号').findOne().bounds().centerX(), text('视频号').findOne().bounds().centerY());
+	sleep(3000);
+	safeModeToYanger();
+	var tuijian = text('推荐').boundsInside(0, 0, device.width,device.height/2).findOne();
+
+	click(device.width - 60, tuijian.bounds().centerY());
+	safeModeToYanger();
+	sleep(2000);
+	swipe(device.width / 2, device.height - 100, device.width / 2, Math.min(device.height / 5, 10), 1500);
+	sleep(1500);
+	click(text('发表视频').findOne().bounds().centerX(), text('发表视频').findOne().bounds().centerY());
+	sleep(2000);
+	click(text('从相册选择').findOne().bounds().centerX(), text('从相册选择').findOne().bounds().centerY());
+	sleep(2000);
+	click(text('图片和视频').findOne().bounds().centerX(), text('图片和视频').findOne().bounds().centerY());
+	sleep(1500);
+	click(text('所有视频').findOne().bounds().centerX(), text('所有视频').findOne().bounds().centerY());
+	sleep(5000);
+
+
+	var shipin = descContains('视频' + globalData.forms[i-1]['video' + i] + ',').find();
+	console.log("shipin", shipin);
+	if (shipin) {
+		click(shipin[0].bounds().centerX(), shipin[0].bounds().centerY());
+	} else {
+		globalData.forms[i - 1].message = '所有视频相册下没有对应视频|' + new Date()
+	}
+	sleep(2000);
+	text('下一步').click();
+	sleep(5000);
+	text('完成').click();
+	sleep(5000);
+	click(text('发表').findOne().bounds().centerX(), text('发表').findOne().bounds().centerY());
+	sleep(5000);
+	myee.emit('result',{code: 1, i: i });
+
+	
+}
+
+// 执行成功回调
+function successCallback(i) {
+
+	var time = new Date().getDate() + ' ' + new Date().getHours() + ':' + new Date().getMinutes();
+	globalData.forms[i - 1].message = time + '|发布成功';
+	ui['message' + i].setText(time + '|发布成功');
+	ui['start' + i].setText('启动');
+	globalData.forms[i - 1]['videosettimeid' + i] && clearTimeout(globalData.forms[i - 1]['videosettimeid' + i]);
+	
+	globalData.thread = '';
+	globalData.forms[i - 1]['videosettimeid' + i] = '';
+	var storage = storages.create('storage');
+	storage.put('globalData', globalData);
+
+	//返回主页
+	back();
+	sleep(1 * 1000);
+	back();
+	//关闭屏幕常亮
+	console.log("关闭屏幕常亮");
+	device.cancelKeepingAwake();
+}
+
+
+//时间处理
+function handleDate(date) {
+	var array = date.split('-');
+	if (date.split('-')[0].length < 2) date = '0' + date;
+
+
+	var year = new Date().getFullYear();
+	var ymd = year + '-' + date.split(' ')[0];
+	var time1 = new Date(ymd).getTime();
+	var array2 = date.split(' ')[1].split(':');
+	var h = Number(array2[0]), m = Number(array2[1]);
+	var time2 = h * 1000 * 60 * 60 + m * 1000 * 60;
+
+	var dateTime = time1 + time2;
+	var date2 = new Date();
+	var year2 = date2.getFullYear();
+	var mount2 = date2.getMonth() + 1;
+	var day2 = date2.getDate();
+
+	var ymd2 = year2 + '-' + dealWidthLength(mount2) + '-' + dealWidthLength(day2);
+	var time3 = new Date(ymd2).getTime();
+	var hour2 = dealWidthLength(date2.getHours());
+	var minute2 = dealWidthLength(date2.getMinutes());
+
+	var time4 = hour2 * 1000 * 60 * 60 + minute2 * 1000 * 60;
+
+	
+	if (time1 + time2 - time3 - time4 < 0 * 60 * 1000) {
+		return 0;
+	}
+
+	return time1 + time2 - time3 - time4
+
+}
+
+
+
+//初始化加载
+function onload() {
+	initData();
+}
+
+
+// 初始化数据
+function initData() {
+	var storage = storages.create("storage");
+	var localGlobalData = storage.get('globalData');
+	var forms = [], localForms = [];
+
+	if (localGlobalData) {
+		localForms = localGlobalData.forms;
+	}
+
+	for (var i = 1; i < 11; i++) {
+		var object = {};
+		object['video' + i] = localForms.length ? localForms[i - 1]['video' + i] : '';
+		console.log("object['video'+i]", object['video' + i], localForms)
+		ui['video' + i].setText(object['video' + i].toString());
+		object['videosettime' + i] = localForms.length ? localForms[i - 1]['videosettime' + i] : '';
+		ui['videosettime' + i].setText(object['videosettime' + i]);
+		object['start' + i] = localForms.length ? localForms[i - 1]['start' + i] : '开启';
+		ui['start' + i].setText(object['start' + i]);
+		object['videosettimeid' + i] = localForms.length ? localForms[i - 1]['videosettimeid' + i] : '';
+		forms.push(object)
+	}
+
+	globalData.forms = forms;
+	console.log("globalData.forms", globalData.forms)
+}
+
+
+
+
+
+// 检查权限是否开启
+function checkService() {
+	console.log("auto.service",auto.service)
+	if (auto.service != null) {
+		ui.autoService.checked = true;
+		ui.autoService.setText('已打开无障碍服务');
 
 	} else {
-		toast('服务异常, 请稍后重试');
-		return false;
+		ui.autoService.checked = false;
+		ui.autoService.setText('请打开无障碍服务');
+		return { value: false, text: '请打开无障碍服务' }
 	}
 
-	if (password != shipinhaokami) {
-		click(100, 100);
-		ui.run(function () {
-			ui.passworderrortip.alpha = 1;
-			ui.passworderrortip.setText('卡密错误');
-		});
-		toast('脚本卡密输入错误');
-		return false;
-	}
-
-	toast('登录成功');
-	sleep(500);
-	ui.run(function () {
-		ui.passworderrortip.setText('');
-		ui.passworderrortip.alpha = 0;
-	});
-
-
-	return true;
+	ui.autoService.checked = true;
 }
 
-function checkValue() {
-	var dianzanTime = ui.dianzanTime.text();
-	if (dianzanTime > 360) {
-		toast('点赞次数设置太大');
-		ui.dianzanTime.setText(180);
-		return false;
-	}
 
-	return true;
-}
 
-function onLoad() {
-	observeKey();
-	safeModeToYanger();
-	dianzan();
-}
+
 
 /*
  * 按音量键下键就停止脚本 
@@ -228,14 +610,15 @@ function onLoad() {
 function observeKey() {
 	events.observeKey();
 	events.onKeyDown("volume_down", function (event) {
-		// threadSwipeVideo && threadSwipeVideo.interrupt();
 		exit();
 		engines.stopAllAndToast();
+		globalData.thread && globalData.thread.interrupt();
 		threads.shutDownAll();
-		device.cancelKeeping();
 		toast('脚本停止运行了');
 	});
 }
+
+
 
 
 
@@ -248,170 +631,12 @@ function safeModeToYanger() {
 }
 
 
-
-// 点赞
-function dianzan() {
-	toast('请打开正在直播页面');
-	var dianzan = id('dpb').findOne();
-	var dianzanTime = Number(ui.dianzanTime.text());
-	var centerX = dianzan.bounds().centerX();
-	var centerY = dianzan.bounds().centerY();
-	var time = Math.floor(60000 / dianzanTime) - 200;
-	console.log("time", time)
-	var t = 0;
-	parseLivePage();
-while(livePage.LiveRoomLikeNum === undefined || livePage.LiveRoomWatchNum === undefined  ) {
-	sleep(5000);
-	parseLivePage();
-}
-
-	if (livePage.LiveRoomLikeNum > 2000 && livePage.LiveRoomLikeNum >= livePage.LiveRoomWatchNum + globalData.vipDianZanTime) {
-		toast('点赞数量大于观看量, 5分钟后继续点赞');
-		sleep(60000 * 5);
+//判断网络情况，如果没有网络，结束脚本运行
+function internetCheck() {
+	var url = "m.baidu.com";
+	var res = http.get(url);
+	if (res.statusCode != 200) {
+		console.error("网络不可用，无法打卡");
+		exit();
 	}
-	toast('开始点赞');
-	var runDisable = true;
-
-	while (runDisable) {
-		t++;
-		ui.run(function () {
-			w.windowDianZan.setText('点赞次数: ' + t);
-		});
-
-
-		console.log(livePage.LiveRoomLikeNum, livePage.LiveRoomWatchNum, t, dianzanTime, t % (dianzanTime * 2))
-		click(centerX, centerY);
-		if (t > 100 & t % (dianzanTime * 2) == 0) {
-			parseLivePage();
-			if (livePage.LiveRoomLikeNum >= livePage.LiveRoomWatchNum) {
-				toast('点赞数量大于观看量, 5分钟后继续点赞');
-				sleep(60000 * 5);
-			}
-		}
-
-		sleep(time);
-		safeModeToYanger();
-	}
-}
-
-// 解析直播页面
-function parseLivePage() {
-	var LiveRoomWatchDom = textContains('人看过').drawingOrder(1).focusable(false).findOne();//多少人看过
-	if (LiveRoomWatchDom) {
-		var LiveRoomWatchDomTexts = LiveRoomWatchDom.text().split(' · ');
-		livePage.LiveRoomWatchNum = LiveRoomWatchDomTexts[0].replace('人看过', '').trim();
-		console.log("LiveRoomWatchNum", livePage.LiveRoomWatchNum)
-		if (livePage.LiveRoomWatchNum.indexOf('万') != -1) {
-			livePage.LiveRoomWatchNum = livePage.LiveRoomWatchNum.replace('万', '');
-			livePage.LiveRoomWatchNum = Number(livePage.LiveRoomWatchNum) * 10000;
-		} else {
-			livePage.LiveRoomWatchNum = Number(livePage.LiveRoomWatchNum);
-		}
-
-		if (LiveRoomWatchDomTexts.length > 1) {
-			livePage.LiveRoomHotNum = LiveRoomWatchDomTexts[1].replace('热度', '').trim();
-
-			if (livePage.LiveRoomHotNum.indexOf('万') != -1) {
-				livePage.LiveRoomHotNum = livePage.LiveRoomHotNum.replace('万', '');
-				livePage.LiveRoomHotNum = Number(livePage.LiveRoomHotNum) * 10000;
-			} else {
-				livePage.LiveRoomHotNum = Number(livePage.LiveRoomHotNum);
-			}
-
-		}
-	}
-
-	var likeBtn = id('dpb').findOne();
-	var num = 0;
-	if (likeBtn) {
-		var numTextDom = likeBtn.find(textMatches(".*\\d+.*"));
-		console.log("numTextDom",numTextDom)
-		if (numTextDom.length > 0) {
-			if (numTextDom[0].text().indexOf('万') != -1) {
-				num = numTextDom[0].text().replace('万', '');
-				num = num * 10000;
-			} else {
-				num = Number(numTextDom[0].text());
-			}
-			livePage.LiveRoomLikeNum = num;
-		}
-	}
-
-	console.log("livePage.LiveRoomLikeNum",LiveRoomWatchDom, livePage.LiveRoomLikeNum)
-
-
-
-}
-
-
-
-function post(options) {
-	options.url = options.url[0] == '/' ? options.url : ('/' + options.url);
-	options.headers = options.headers ? options.headers : {};
-	options.showMessage = options.showMessage === undefined ? true : options.showMessage;
-	options.sync = options.sync === undefined ? true : options.sync;
-	options.data = options.data ? options.data : {};
-
-	var headers = Object.assign({
-
-	}, options.headers);
-
-	if (options.sync) {// 有回调，异步执行
-		http.post(globalData.api + options.url, options.data, {
-			headers: headers
-		}, function (res) {
-			try {
-				if (res.statusCode == 200) {
-					var RES = JSON.parse(res.body.string());
-					console.log(options.url + ' post返回', RES)
-					if (RES.Code != 1 && options.showMessage) {
-
-						toast('接口异常' + options.url);
-					} else {
-						if (options.showMessage) {
-							toast('请求成功: ' + options.url);
-						}
-
-						options.success && options.success(RES);
-					}
-
-				} else {
-					toast('网络异常' + options.url);
-				}
-			}
-			catch (err) {
-
-			}
-
-		})
-
-	} else {//同步，阻塞进行
-		console.log("aaaa", globalData.api + options.url);
-
-		var res = http.post(globalData.api + options.url, options.data, {
-			headers: headers
-		});
-		try {
-			if (res.statusCode == 200) {
-				var RES = JSON.parse(res.body.string());
-				console.log(options.url + ' post返回', RES)
-				if (RES.Code != 1 && options.showMessage) {
-					toast('接口异常' + options.url);
-				} else {
-					if (options.showMessage) {
-						toast('保存成功: ' + options.url);
-					}
-
-					return RES;
-				}
-
-			} else {
-				toast('网络异常' + options.url);
-			}
-		}
-		catch (err) {
-			console.log("同步 post error catch", err)
-		}
-	}
-
 }
