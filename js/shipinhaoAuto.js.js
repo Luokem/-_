@@ -11,6 +11,13 @@ checkService();
 clearStorage();
 onload();
 
+threads.start(function(){
+console.show();
+console.setPosition(50, device.height/2)
+console.setSize(50,50);
+})
+
+
 var myee = events.emitter();	
 InitEventEmit();
 
@@ -22,7 +29,7 @@ function showMainUI() {
 			<ScrollView>
 				<vertical>
 					<vertical margin="10" bg="#ffffff" padding="10" radius="20">
-						<Switch id="autoService" text="{{auto.service != null ? '已打开无障碍服务' : '请打开无障碍服务' }}" checked="{{true}}" padding="8 8 8 8" textSize="15sp" />
+						<Switch id="autoService" text="{{auto.service != null ? '已打开无障碍服务了' : '请打开无障碍服务。' }}" checked="{{true}}" padding="8 8 8 8" textSize="15sp" />
 					</vertical>
 					{/* 视频序号1 */}
 					<vertical margin="10" bg="#ffffff" padding="10 5" radius="20">
@@ -349,12 +356,15 @@ function addTask(form, i) {
 	if (!form['video' + i] || !form['videosettime' + i]) return;
 	console.log("globalData.forms", handleDate(form['videosettime' + i]))
 	if (handleDate(form['videosettime' + i]) <= 0) {
-		toast('开启失败!时间不能低于目前时间')
+		log('开启失败!时间不能低于目前时间')
+
+		// toast('开启失败!时间不能低于目前时间')
 		return;
 	}
 
 	for (var h = 1; h < 11; h++) {
 		if (globalData.forms[h - 1]['video' + h] == form['video' + h] && globalData.forms[h - 1]['start' + h] == '暂停') {
+			log('开启失败!已有相同视频等待上传!')
 			toast('开启失败!已有相同视频等待上传!')
 			return;
 		}
@@ -378,6 +388,8 @@ function addTask(form, i) {
 				var storage = storages.create('storage');
 				storage.put('globalData', globalData);
 				ui['message' + i].setText('任务已作废')
+			log('任务已作废')
+
 				toast('任务已作废');
 				globalData.thread.interrupt();
 			}
@@ -438,6 +450,8 @@ function openShipinhao(i) {
 	launchApp("微信")
 	sleep(5 * 1000);
 	console.log("打开微信。。。")
+	log("打开微信。。。")
+
 	while (!(text('微信').exists() && text('通讯录').exists() && text('发现').exists() && text('我').exists())) {
 		back();
 		sleep(1500);
@@ -448,8 +462,9 @@ function openShipinhao(i) {
 	sleep(3000);
 
 	click(text('视频号').findOne().bounds().centerX(), text('视频号').findOne().bounds().centerY());
-	sleep(3000);
+	sleep(10000);
 	safeModeToYanger();
+	console.log(" text('推荐')", text('推荐').find());
 	var tuijian = text('推荐').boundsInside(0, 0, device.width,device.height/2).findOne();
 
 	click(device.width - 60, tuijian.bounds().centerY());
@@ -504,6 +519,7 @@ function successCallback(i) {
 	back();
 	sleep(1 * 1000);
 	back();
+	log(globalData.forms[i - 1].message)
 	//关闭屏幕常亮
 	console.log("关闭屏幕常亮");
 	device.cancelKeepingAwake();
