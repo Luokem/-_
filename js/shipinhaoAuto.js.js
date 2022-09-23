@@ -29,7 +29,7 @@ function showMainUI() {
 			<ScrollView>
 				<vertical>
 					<vertical margin="10" bg="#ffffff" padding="10" radius="20">
-						<Switch id="autoService" text="{{auto.service != null ? '已打开无障碍服务了' : '请打开无障碍服务。' }}" checked="{{true}}" padding="8 8 8 8" textSize="15sp" />
+						<Switch id="autoService" text="{{auto.service != null ? '已打开无障碍服务-' : '请打开无障碍服务' }}" checked="{{true}}" padding="8 8 8 8" textSize="15sp" />
 					</vertical>
 					{/* 视频序号1 */}
 					<vertical margin="10" bg="#ffffff" padding="10 5" radius="20">
@@ -462,7 +462,7 @@ function openShipinhao(i) {
 	sleep(3000);
 
 	click(text('视频号').findOne().bounds().centerX(), text('视频号').findOne().bounds().centerY());
-	sleep(10000);
+	sleep(30000);
 	safeModeToYanger();
 	console.log(" text('推荐')", text('推荐').find());
 	var tuijian = text('推荐').boundsInside(0, 0, device.width,device.height/2).findOne();
